@@ -1,0 +1,3 @@
+# The "exclude" checker will error if the specified value is included.
+[exclude]
+"src/**/*.py" = "localhost"

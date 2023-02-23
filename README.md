@@ -7,13 +7,13 @@ Python library for sending events to EnaLog
 ```python
 from enalog import push
 
-push(api_token='dummy_api_token', event={
+push_event(api_token='dummy_api_token', event={
+    'project': 'enalog'
     'name': 'user-subscribed',
     'description': 'User has subscribed to EnaLog',
     'push': False,
     'icon': '💰',
-    'tags': {
-        'app': 'EnaLog'
-    }
+    'tags': ['app': 'EnaLog'],
+    'meta': {'user_id': 123}
 })
 ```
