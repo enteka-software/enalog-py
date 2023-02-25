@@ -1,15 +1,19 @@
 [tool.poetry]
-name = "enalog-py"
+name = "enalog"
 version = "0.1.0"
 description = "Python package for sending events to EnaLog"
 authors = ["Sam Newby <sam.newby19@gmail.com>"]
 readme = "README.md"
-packages = [{include = "enalog_py"}]
+packages = [{include = "enalog"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
 requests = "^2.28.2"
 
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.1"
+requests-mock = "^1.10.0"
 
 [build-system]
 requires = ["poetry-core"]
