@@ -20,8 +20,12 @@ def push_event(api_token: str, event: Dict) -> Dict:
             data=event,
             headers={"Authorization": f"Bearer: {api_token}"},
         )
+        
+        res.raise_for_status()
 
         if res.status_code == 200:
             return {"status_code": 200, "message": "Event succesfully sent to EnaLog"}
-    except requests.exceptions.RequestException as ex:
+    except requests.exceptions.HTTPError as ex:
         return {"status_code": ex.response.status_code, "message": ex.response.text}
+    except requests.exceptions.RequestException as ex:
+        return {"status_code": "500", "message": "Internal server error"}
