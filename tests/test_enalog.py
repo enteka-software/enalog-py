@@ -1,4 +1,4 @@
-from enalog import push_event
+from enalog import push_event, MissingRequiredData
 import pytest
 
 import requests
@@ -12,11 +12,10 @@ def test_push_event_returns_missing_project_key_when_required_project_key_is_not
         api_token = "12345"
         event = {"name": "enalog", "push": True}
 
-        res = push_event(api_token=api_token, event=event)
+        with pytest.raises(MissingRequiredData) as e_info:
+            res = push_event(api_token=api_token, event=event)
 
-        assert len(res) == 1
-        assert "project" in res
-        assert res["project"] == "project key is missing from your event data"
+            assert e_info.message == "The project key(s) are missing from the event data"
 
 
 def test_push_event_returns_missing_name_key_when_required_name_key_is_not_provided():
@@ -26,12 +25,10 @@ def test_push_event_returns_missing_name_key_when_required_name_key_is_not_provi
         api_token = "12345"
         event = {"project": "enalog", "push": True}
 
-        res = push_event(api_token=api_token, event=event)
+        with pytest.raises(MissingRequiredData) as e_info:
+            res = push_event(api_token=api_token, event=event)
 
-        assert len(res) == 1
-        assert "name" in res
-        assert res["name"] == "name key is missing from your event data"
-
+            assert e_info.message == "The name key(s) are missing from the event data"
 
 def test_push_event_returns_missing_push_key_when_required_push_key_is_not_provided():
     with requests_mock.Mocker() as m:
@@ -40,11 +37,11 @@ def test_push_event_returns_missing_push_key_when_required_push_key_is_not_provi
         api_token = "12345"
         event = {"project": "enalog", "name": "user-subscribed"}
 
-        res = push_event(api_token=api_token, event=event)
+        with pytest.raises(MissingRequiredData) as e_info:
+            res = push_event(api_token=api_token, event=event)
 
-        assert len(res) == 1
-        assert "push" in res
-        assert res["push"] == "push key is missing from your event data"
+            assert e_info.message == "The push key(s) are missing from the event data"
+
 
 
 def test_push_event_returns_missing_keys_when_required_multiple_keys_is_not_provided():
@@ -54,11 +51,10 @@ def test_push_event_returns_missing_keys_when_required_multiple_keys_is_not_prov
         api_token = "12345"
         event = {"project": "enalog"}
 
-        res = push_event(api_token=api_token, event=event)
-
-        assert len(res) == 2
-        assert "name" in res
-        assert "push" in res
+        with pytest.raises(MissingRequiredData) as e_info:
+            res = push_event(api_token=api_token, event=event)
+            
+            assert e_info.message == "The name, push key(s) are missing from the event data"
 
 
 def test_push_event_returns_200_response_if_event_is_successful():
@@ -86,7 +82,7 @@ def test_push_event_returns_401_response_if_event_is_unauthenticated():
 
         m.post(
             "https://api.enalog.app/v1/events",
-            exc=requests.exceptions.RequestException(response=mocked_res),
+            exc=requests.exceptions.HTTPError(response=mocked_res),
         )
 
         api_token = "12345"
@@ -107,7 +103,7 @@ def test_push_event_returns_404_response_if_event_is_unauthenticated():
 
         m.post(
             "https://api.enalog.app/v1/events",
-            exc=requests.exceptions.RequestException(response=mocked_res),
+            exc=requests.exceptions.HTTPError(response=mocked_res),
         )
 
         api_token = "12345"

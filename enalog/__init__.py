@@ -2,25 +2,38 @@ from typing import Dict
 import requests
 
 
+class MissingRequiredData(Exception):
+    """Thrown when required keys are missing from the data object"""
+
+    pass
+
+
 def push_event(api_token: str, event: Dict) -> Dict:
     required_keys = ("project", "name", "push")
     if not all(key in event for key in required_keys):
         missing_keys = set(required_keys) - event.keys()
-        
-        missing_keys_res = {}
-        
-        for miss in missing_keys:
-            missing_keys_res[miss] = f"{miss} key is missing from your event data"
 
-        return missing_keys_res
+        missing_keys_res = ""
+
+        last_items = list(missing_keys)[-1]
+
+        for miss in missing_keys:
+            if miss == last_items:
+                missing_keys_res += f"{miss}"
+            else:
+                missing_keys_res += f"{miss}, "
+
+        raise MissingRequiredData(
+            f"The {missing_keys_res} key(s) are missing from the event data"
+        )
 
     try:
         res = requests.post(
             "https://api.enalog.app/v1/events",
             data=event,
-            headers={"Authorization": f"Bearer: {api_token}"},
+            headers={"Authorization": f"Bearer {api_token}"},
         )
-        
+
         res.raise_for_status()
 
         if res.status_code == 200:
