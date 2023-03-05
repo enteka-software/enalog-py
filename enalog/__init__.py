@@ -30,7 +30,7 @@ def push_event(api_token: str, event: Dict) -> Dict:
     try:
         res = requests.post(
             "https://api.enalog.app/v1/events",
-            data=event,
+            json=event,
             headers={"Authorization": f"Bearer {api_token}"},
         )
 

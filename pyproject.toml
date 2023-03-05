@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "enalog"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python package for sending events to EnaLog"
 authors = ["Sam Newby <sam.newby19@gmail.com>"]
 readme = "README.md"
