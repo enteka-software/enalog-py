@@ -14,6 +14,7 @@ push_event(api_token='dummy_api_token', event={
     'push': False,
     'icon': '💰',
     'tags': ['app': 'EnaLog'],
-    'meta': {'user_id': 123}
+    'meta': {'user_id': 123},
+    'channels': {'slack': '<slack-channel-name>'}
 })
 ```
