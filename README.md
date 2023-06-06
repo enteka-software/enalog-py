@@ -1,6 +1,6 @@
 # enalog-py
 
-Python library for sending events to EnaLog
+EnaLog Python SDK
 
 ### Usage
 

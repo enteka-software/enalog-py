@@ -1,6 +1,7 @@
 from typing import Dict, Union
 from os import environ
 import requests
+from requests.exceptions import HTTPError, RequestException
 
 
 class MissingRequiredData(Exception):
@@ -52,7 +53,7 @@ class EnaLog:
         else:
             self.api_token = environ.get("ENALOG_API_TOKEN", "")
 
-    def push_event(api_token: str, event: Dict) -> Dict:
+    def push_event(self, event: Dict) -> Dict:
         required_keys = ("project", "name", "push")
         if not all(key in event for key in required_keys):
             missing_keys = set(required_keys) - event.keys()
@@ -75,7 +76,7 @@ class EnaLog:
             res = requests.post(
                 "https://api.enalog.app/v1/events",
                 json=event,
-                headers={"Authorization": f"Bearer {api_token}"},
+                headers={"Authorization": f"Bearer {self.api_token}"},
             )
 
             res.raise_for_status()
@@ -86,9 +87,9 @@ class EnaLog:
                     "message": "Event succesfully sent to EnaLog",
                 }
         except requests.exceptions.HTTPError as ex:
-            return {"status_code": ex.response.status_code, "message": ex.response.text}
+            raise HTTPError(ex)
         except requests.exceptions.RequestException as ex:
-            return {"status_code": "500", "message": "Internal server error"}
+            raise RequestException(ex)
 
     def check_feature(self, feature: str, user_id: str) -> Union[bool, str]:
         try:
@@ -103,12 +104,12 @@ class EnaLog:
             if res.status_code == 200:
                 data = res.json()
 
-                if data.metric_type == "Boolean":
-                    if data.variant == "a-variant":
+                if data["flag_type"] == "Boolean":
+                    if data["variant"] == "a-variant":
                         return True
                     else:
                         return False
         except requests.exceptions.HTTPError as ex:
-            return {"status_code": ex.response.status_code, "message": ex.response.text}
+            raise HTTPError(ex)
         except requests.exceptions.RequestException as ex:
-            return {"status_code": "500", "message": "Internal server error"}
+            raise RequestException(ex)
