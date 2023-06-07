@@ -1,7 +1,12 @@
 from typing import Dict, Union
 from os import environ
+import logging
+
 import requests
 from requests.exceptions import HTTPError, RequestException
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 class MissingRequiredData(Exception):
@@ -87,9 +92,11 @@ class EnaLog:
                     "message": "Event succesfully sent to EnaLog",
                 }
         except requests.exceptions.HTTPError as ex:
-            raise HTTPError(ex)
+            logger.error("EnaLog: Failed to send send event")
+            return
         except requests.exceptions.RequestException as ex:
-            raise RequestException(ex)
+            logger.error("EnaLog: Failed to send send event")
+            return
 
     def check_feature(self, feature: str, user_id: str) -> Union[bool, str]:
         try:
@@ -110,6 +117,8 @@ class EnaLog:
                     else:
                         return False
         except requests.exceptions.HTTPError as ex:
-            raise HTTPError(ex)
+            logger.error("EnaLog: Failed to get evaluation for feature flag")
+            return False
         except requests.exceptions.RequestException as ex:
-            raise RequestException(ex)
+            logger.error("EnaLog: Failed to get evaluation for feature flag")
+            return False
