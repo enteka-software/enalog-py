@@ -94,7 +94,7 @@ class EnaLog:
     def check_feature(self, feature: str, user_id: str) -> Union[bool, str]:
         try:
             res = requests.post(
-                "http://localhost:8000/v1/feature-flags",
+                "https://api.enalog.app/v1/feature-flags",
                 json={"name": feature, "user_id": user_id},
                 headers={"Authorization": f"Bearer {self.api_token}"},
             )

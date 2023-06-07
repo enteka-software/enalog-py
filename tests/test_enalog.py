@@ -186,7 +186,7 @@ def test_enalog_class_push_event_returns_404_response_if_event_is_unauthenticate
 def test_enalog_class_check_feature_returns_if_user_is_in_experiment_if_in_a_variant():
     with requests_mock.Mocker() as m:
         m.post(
-            "http://localhost:8000/v1/feature-flags",
+            "https://api.enalog.app/v1/feature-flags",
             text=json.dumps({"flag_type": "Boolean", "variant": "a-variant"}),
         )
 
@@ -200,7 +200,7 @@ def test_enalog_class_check_feature_returns_if_user_is_in_experiment_if_in_a_var
 def test_enalog_class_check_feature_returns_if_user_is_in_experiment_if_in_control_variant():
     with requests_mock.Mocker() as m:
         m.post(
-            "http://localhost:8000/v1/feature-flags",
+            "https://api.enalog.app/v1/feature-flags",
             text=json.dumps({"flag_type": "Boolean", "variant": "control-variant"}),
         )
 
@@ -217,7 +217,7 @@ def test_enalog_class_check_feature_raises_http_error():
         mocked_res.status_code = 404
 
         m.post(
-            "http://localhost:8000/v1/feature-flags",
+            "https://api.enalog.app/v1/feature-flags",
             exc=requests.exceptions.HTTPError(response=mocked_res),
         )
 
@@ -233,7 +233,7 @@ def test_enalog_class_check_feature_raises_request_error():
         mocked_res.status_code = 404
 
         m.post(
-            "http://localhost:8000/v1/feature-flags",
+            "https://api.enalog.app/v1/feature-flags",
             exc=requests.exceptions.RequestException(response=mocked_res),
         )
 
